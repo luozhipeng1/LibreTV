@@ -28,7 +28,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // 设置默认API选择（如果是第一次加载）
     if (!localStorage.getItem('hasInitializedDefaults')) {
         // 默认选中资源
-        selectedAPIs = ["tyyszy", "bfzy", "dyttzy", "ruyi"];
+        selectedAPIs = Object.keys(API_SITES);
+
+        // 同时选中所有自定义API（如果有的话）
+        customAPIs.forEach((_, index) => {
+            selectedAPIs.push('custom_' + index);
+        });
+
         localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
 
         // 默认选中过滤开关
@@ -642,7 +648,7 @@ async function search() {
 
         // 从所有选中的API源搜索
         let allResults = [];
-        const searchPromises = selectedAPIs.map(apiId => 
+        const searchPromises = selectedAPIs.map(apiId =>
             searchByAPIAndKeyWord(apiId, query)
         );
 
@@ -661,7 +667,7 @@ async function search() {
             // 首先按照视频名称排序
             const nameCompare = (a.vod_name || '').localeCompare(b.vod_name || '');
             if (nameCompare !== 0) return nameCompare;
-            
+
             // 如果名称相同，则按照来源排序
             return (a.source_name || '').localeCompare(b.source_name || '');
         });
